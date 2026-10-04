@@ -1,0 +1,12 @@
+# Compiled files
+*.class
+out/
+bin/
+
+# Local database (contains test data)
+*.db
+
+# IDE files
+.idea/
+.vscode/
+*.iml
