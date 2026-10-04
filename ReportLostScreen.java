@@ -1,0 +1,195 @@
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.*;
+
+public class ReportLostScreen extends JFrame {
+
+    private JTextField nameField, contactField, itemField, locationField;
+    private CalendarPicker datePicker;
+    private JTextArea descArea;
+    private JComboBox<String> categoryCombo;
+
+    public ReportLostScreen() {
+        setTitle("Report Lost Item");
+        setSize(580, 700);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setContentPane(buildContent());
+    }
+
+    private JPanel buildContent() {
+        JPanel root = Theme.gradientPanel(Theme.BG_DARK, new Color(30, 10, 10), true);
+        root.setLayout(new BorderLayout());
+
+        // HEADER
+        JPanel header = new JPanel() {
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(0,0, new Color(255,80,50,80), getWidth(),0, new Color(255,140,50,40));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+            }
+        };
+        header.setOpaque(false);
+        header.setPreferredSize(new Dimension(580, 80));
+        header.setLayout(new GridBagLayout());
+        JPanel hBox = new JPanel();
+        hBox.setOpaque(false);
+        hBox.setLayout(new BoxLayout(hBox, BoxLayout.Y_AXIS));
+        JLabel hIcon = new JLabel("📦  Report Lost Item");
+        hIcon.setFont(new Font("Segoe UI Emoji", Font.BOLD, 22));
+        hIcon.setForeground(Theme.TEXT_PRIMARY);
+        hIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel hSub = new JLabel("Fill in the details of your lost item");
+        hSub.setFont(Theme.FONT_BODY);
+        hSub.setForeground(Theme.TEXT_MUTED);
+        hSub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        hBox.add(hIcon);
+        hBox.add(Box.createVerticalStrut(4));
+        hBox.add(hSub);
+        header.add(hBox);
+
+        // FORM CARD
+        JPanel formCard = Theme.cardPanel();
+        formCard.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        nameField     = Theme.styledField("Your full name");
+        contactField  = Theme.styledField("Phone or Email");
+        itemField     = Theme.styledField("e.g. Black Wallet, Blue Umbrella");
+        locationField = Theme.styledField("Where did you lose it?");
+        descArea      = Theme.styledTextArea();
+        categoryCombo = Theme.styledCombo(new String[]{
+            "Select Category","Electronics","Clothing","Accessories",
+            "Documents","Keys","Bags","Others"});
+        datePicker    = new CalendarPicker();
+
+        int row = 0;
+
+        gbc.gridy = row++; gbc.insets = new Insets(14, 20, 2, 20);
+        formCard.add(Theme.label("👤  Your Name", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        formCard.add(nameField, gbc);
+
+        gbc.gridy = row++; gbc.insets = new Insets(8, 20, 2, 20);
+        formCard.add(Theme.label("📞  Contact Info", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        formCard.add(contactField, gbc);
+
+        gbc.gridy = row++; gbc.insets = new Insets(8, 20, 2, 20);
+        formCard.add(Theme.label("🏷  Item Name", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        formCard.add(itemField, gbc);
+
+        gbc.gridy = row++; gbc.insets = new Insets(8, 20, 2, 20);
+        formCard.add(Theme.label("📂  Category", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        formCard.add(categoryCombo, gbc);
+
+        gbc.gridy = row++; gbc.insets = new Insets(8, 20, 2, 20);
+        formCard.add(Theme.label("📍  Last Seen Location", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        formCard.add(locationField, gbc);
+
+        gbc.gridy = row++; gbc.insets = new Insets(8, 20, 2, 20);
+        formCard.add(Theme.label("📅  Date Lost", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        formCard.add(datePicker, gbc);
+
+        gbc.gridy = row++; gbc.insets = new Insets(8, 20, 2, 20);
+        formCard.add(Theme.label("📝  Description", Theme.FONT_LABEL, Theme.TEXT_MUTED), gbc);
+        gbc.gridy = row++; gbc.insets = new Insets(2, 20, 6, 20);
+        descArea.setRows(5);
+        JScrollPane scrollDesc = new JScrollPane(descArea);
+        scrollDesc.setBorder(BorderFactory.createLineBorder(Theme.BORDER_COLOR, 1, true));
+        scrollDesc.setOpaque(false);
+        scrollDesc.getViewport().setOpaque(false);
+        scrollDesc.setPreferredSize(new Dimension(490, 100));
+        scrollDesc.setMinimumSize(new Dimension(490, 100));
+        formCard.add(scrollDesc, gbc);
+
+        // BUTTON ROW
+        JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
+        btnRow.setOpaque(false);
+        JButton clearBtn  = Theme.styledButton("Clear", Theme.BG_CARD2, Theme.BORDER_COLOR);
+        clearBtn.setPreferredSize(new Dimension(140, 44));
+        JButton submitBtn = Theme.styledButton("Submit Report", Theme.ACCENT_ORANGE, new Color(255,80,50));
+        submitBtn.setPreferredSize(new Dimension(200, 44));
+        clearBtn.addActionListener(e -> clearForm());
+        submitBtn.addActionListener(e -> submitForm());
+        btnRow.add(clearBtn);
+        btnRow.add(submitBtn);
+
+        gbc.gridy = row; gbc.insets = new Insets(16, 20, 20, 20);
+        formCard.add(btnRow, gbc);
+
+        JPanel centerWrap = new JPanel();
+        centerWrap.setLayout(new BoxLayout(centerWrap, BoxLayout.Y_AXIS));
+        centerWrap.setOpaque(false);
+        formCard.setAlignmentX(Component.CENTER_ALIGNMENT);
+        formCard.setMaximumSize(new Dimension(540, Integer.MAX_VALUE));
+        JPanel hPad = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 16));
+        hPad.setOpaque(false);
+        hPad.add(formCard);
+        centerWrap.add(hPad);
+
+        JScrollPane outerScroll = new JScrollPane(centerWrap);
+        outerScroll.setOpaque(false);
+        outerScroll.getViewport().setOpaque(false);
+        outerScroll.setBorder(BorderFactory.createEmptyBorder());
+        outerScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        outerScroll.getVerticalScrollBar().setUnitIncrement(14);
+
+        root.add(header, BorderLayout.NORTH);
+        root.add(outerScroll, BorderLayout.CENTER);
+        return root;
+    }
+
+    private void clearForm() {
+        nameField.setText("");
+        contactField.setText("");
+        itemField.setText("");
+        locationField.setText("");
+        descArea.setText("");
+        categoryCombo.setSelectedIndex(0);
+        datePicker.reset();
+    }
+
+    private void submitForm() {
+        String name     = nameField.getText().trim();
+        String contact  = contactField.getText().trim();
+        String item     = itemField.getText().trim();
+        String location = locationField.getText().trim();
+        String desc     = descArea.getText().trim();
+        String cat      = (String) categoryCombo.getSelectedItem();
+        String date     = datePicker.getFormattedDate();
+
+        if (name.isEmpty() || contact.isEmpty() || item.isEmpty()) {
+            showError("Please fill in Name, Contact, and Item Name at minimum.");
+            return;
+        }
+
+        DataStore.Item newItem = new DataStore.Item(name, contact, item, desc, location, date,
+            cat.equals("Select Category") ? "Others" : cat, "LOST");
+        DataStore.addItem(newItem);
+
+        String msg = newItem.status.equals("MATCHED")
+            ? "✅ Great news! A matching found item was detected!\nYour Reference ID: " + newItem.id + "\nCheck your status to see more details."
+            : "✅ Lost item registered successfully!\nYour Reference ID: " + newItem.id + "\nWe'll notify you when a match is found.";
+
+        JOptionPane.showMessageDialog(this, msg, "Report Submitted", JOptionPane.INFORMATION_MESSAGE);
+        clearForm();
+    }
+
+    private void showError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Missing Information", JOptionPane.WARNING_MESSAGE);
+    }
+}
